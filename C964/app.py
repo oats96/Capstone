@@ -1,10 +1,11 @@
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
 import joblib
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 
 # Load training and testing datasets
-train_data = pd.read_csv('/mnt/data/train.csv')
-test_data = pd.read_csv('/mnt/data/test.csv')
+train_data = pd.read_csv('train.csv')
+test_data = pd.read_csv('test.csv')
 
 # Display data previews
 st.title("Demand Forecasting Application")
@@ -34,8 +35,6 @@ rf_model.fit(X_train, y_train)
 joblib.dump(rf_model, "rf_model.pkl")
 st.success("Model trained and saved!")
 
-from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
-
 # Generate predictions
 y_pred = rf_model.predict(X_test)
 
@@ -49,3 +48,24 @@ st.subheader("Model Accuracy Metrics")
 st.write(f"R-squared: {r2:.4f}")
 st.write(f"Mean Absolute Error (MAE): {mae:.4f}")
 st.write(f"Root Mean Squared Error (RMSE): {rmse:.4f}")
+
+plt.figure(figsize=(10, 5))
+plt.scatter(y_test, y_pred, alpha=0.6)
+plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], '--r')
+plt.xlabel("Actual Values")
+plt.ylabel("Predicted Values")
+plt.title("Actual vs Predicted")
+st.pyplot(plt)
+
+st.subheader("Make Predictions")
+
+# Create input fields for user data
+input_data = {}
+for feature in features:
+    input_data[feature] = st.number_input(f"Enter {feature} value", value=0.0)
+
+# Make predictions
+if st.button("Predict"):
+    input_df = pd.DataFrame([input_data])
+    prediction = rf_model.predict(input_df)
+    st.write(f"Predicted {target}: {prediction[0]:.2f}")
