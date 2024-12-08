@@ -73,12 +73,12 @@ encoder = LabelEncoder()
 train_data['store_id'] = encoder.fit_transform(train_data['store_id'])
 test_data['store_id'] = encoder.transform(test_data['store_id'])
 
-# Train the model
-rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
+# Train Random Forest with fewer trees and limited depth
+rf_model = RandomForestRegressor(n_estimators=50, max_depth=10, random_state=42)
 rf_model.fit(X_train, y_train)
 
-# Save the model
-joblib.dump(rf_model, "rf_model.pkl")
+# Save the model with compression
+joblib.dump(rf_model, "rf_model.pkl", compress=3)
 
 # Generate predictions for test data
 y_pred = rf_model.predict(X_test)
