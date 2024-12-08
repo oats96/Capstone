@@ -1,9 +1,11 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
+import joblib
+import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-import matplotlib.pyplot as plt
-import joblib
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 # Cleaning function
 def clean_data(data, features, target=None, train=True):
@@ -84,6 +86,11 @@ joblib.dump(rf_model, "rf_model.pkl", compress=3)
 # Generate predictions for test data
 y_pred = rf_model.predict(X_test)
 
+# Calculate evaluation metrics
+r2 = r2_score(y_train, rf_model.predict(X_train))  # R-squared on training data
+mae = mean_absolute_error(y_train, rf_model.predict(X_train))  # Mean Absolute Error
+rmse = np.sqrt(mean_squared_error(y_train, rf_model.predict(X_train)))  # Root Mean Squared Error
+
 # Add predictions to the test dataset
 test_data['predicted_units_sold'] = y_pred
 
@@ -95,6 +102,11 @@ st.write(train_data.head())
 
 st.subheader("Testing Data with Predictions")
 st.write(test_data[['sku_id', 'predicted_units_sold']].head())
+
+st.subheader("Model Evaluation Metrics")
+st.write(f"R-squared: {r2:.4f}")
+st.write(f"Mean Absolute Error (MAE): {mae:.4f}")
+st.write(f"Root Mean Squared Error (RMSE): {rmse:.4f}")
 
 # Visualization 1: Feature Importance Plot
 st.subheader("Feature Importance")
