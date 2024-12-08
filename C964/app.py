@@ -117,12 +117,19 @@ plt.xticks(rotation=45)
 plt.grid()
 st.pyplot(plt)
 
-# Visualization 3: Interactive Prediction Histogram
-st.subheader("Interactive Visualization: Prediction Histogram")
-max_bins = st.slider("Select Number of Bins for Histogram", 5, 50, 20)
-plt.figure(figsize=(8, 5))
-plt.hist(y_pred, bins=max_bins, alpha=0.7, color='green')
-plt.xlabel("Predicted Units Sold")
-plt.ylabel("Frequency")
-plt.title("Distribution of Predicted Units Sold")
+# Visualization 3: Predicted Units Sold Bar Chart
+st.subheader("Predicted Units Sold by SKU (Top N)")
+top_n = st.slider("Select Number of SKUs to Display", 5, 50, 10)
+
+# Aggregate predictions by SKU and sort
+sku_predictions = test_data.groupby('sku_id')['predicted_units_sold'].sum().sort_values(ascending=False).head(top_n)
+
+# Create bar chart
+plt.figure(figsize=(10, 6))
+sku_predictions.plot(kind='bar', color='skyblue', alpha=0.7)
+plt.xlabel("SKU ID")
+plt.ylabel("Total Predicted Units Sold")
+plt.title(f"Top {top_n} SKUs by Predicted Units Sold")
+plt.xticks(rotation=45)
+plt.grid(axis='y', linestyle='--', alpha=0.7)
 st.pyplot(plt)
