@@ -62,6 +62,7 @@ y_train = train_data[target]
 # Clean testing data
 test_data = clean_data(test_data, features, train=False)
 X_test = test_data[features]
+test_data['sku_id'] = test_data['sku_id'].astype(str)
 
 # Scale numerical features
 scaler = StandardScaler()
