@@ -73,12 +73,12 @@ encoder = LabelEncoder()
 train_data['store_id'] = encoder.fit_transform(train_data['store_id'])
 test_data['store_id'] = encoder.transform(test_data['store_id'])
 
-# Train Random Forest with fewer trees and limited depth
-rf_model = RandomForestRegressor(n_estimators=50, max_depth=10, random_state=42)
+# Train the model
+rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
 rf_model.fit(X_train, y_train)
 
-# Save the model with compression
-joblib.dump(rf_model, "rf_model.pkl", compress=3)
+# Save the model
+joblib.dump(rf_model, "rf_model.pkl")
 
 # Generate predictions for test data
 y_pred = rf_model.predict(X_test)
@@ -93,7 +93,7 @@ st.subheader("Training Data Preview")
 st.write(train_data.head())
 
 st.subheader("Testing Data with Predictions")
-st.write(test_data[['record_ID', 'predicted_units_sold']].head())
+st.write(test_data[['sku_id', 'predicted_units_sold']].head())
 
 # Visualization 1: Feature Importance Plot
 st.subheader("Feature Importance")
@@ -105,15 +105,15 @@ plt.ylabel("Feature")
 plt.title("Feature Importance in the Model")
 st.pyplot(plt)
 
-# Visualization 2: Actual vs Predicted Plot
-st.subheader("Actual vs Predicted Units Sold")
+# Visualization 2: Predicted vs. SKU Scatter Plot
+st.subheader("Predicted Demand per SKU")
 plt.figure(figsize=(8, 5))
-plt.scatter(y_train[:len(y_pred)], y_pred, alpha=0.6, color='blue')
-plt.plot([min(y_train), max(y_train)], [min(y_train), max(y_train)], '--r', label="Ideal Fit")
-plt.xlabel("Actual Units Sold")
+plt.scatter(test_data['sku_id'], test_data['predicted_units_sold'], alpha=0.7, color='blue')
+plt.xlabel("SKU ID")
 plt.ylabel("Predicted Units Sold")
-plt.title("Actual vs Predicted Units Sold")
-plt.legend()
+plt.title("Predicted Units Sold per SKU")
+plt.xticks(rotation=45)
+plt.grid()
 st.pyplot(plt)
 
 # Visualization 3: Interactive Prediction Histogram
