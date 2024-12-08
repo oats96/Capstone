@@ -1,11 +1,15 @@
+import streamlit as st
 import pandas as pd
-import joblib
+import numpy as np
+from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
+import matplotlib.pyplot as plt
+import joblib
 
 # Load training and testing datasets
-train_data = pd.read_csv('train.csv')
-test_data = pd.read_csv('test.csv')
+train_data = pd.read_csv('./C964/train.csv')
+test_data = pd.read_csv('./C964/test.csv')
 
 # Display data previews
 st.title("Demand Forecasting Application")
