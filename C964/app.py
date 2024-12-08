@@ -95,16 +95,33 @@ st.write(train_data.head())
 st.subheader("Testing Data with Predictions")
 st.write(test_data[['record_ID', 'predicted_units_sold']].head())
 
-# Interactive graph with a slider
-st.subheader("Interactive Visualization of Predictions")
-max_points = st.slider("Number of Data Points to Display", 10, len(test_data), 50)
+# Visualization 1: Feature Importance Plot
+st.subheader("Feature Importance")
+feature_importances = rf_model.feature_importances_
+plt.figure(figsize=(8, 5))
+plt.barh(features, feature_importances, color='skyblue')
+plt.xlabel("Importance")
+plt.ylabel("Feature")
+plt.title("Feature Importance in the Model")
+st.pyplot(plt)
 
-# Interactive scatter plot
-plt.figure(figsize=(10, 6))
-plt.scatter(test_data['record_ID'][:max_points], test_data['predicted_units_sold'][:max_points], alpha=0.7, color='blue')
-plt.xlabel("Record ID")
+# Visualization 2: Actual vs Predicted Plot
+st.subheader("Actual vs Predicted Units Sold")
+plt.figure(figsize=(8, 5))
+plt.scatter(y_train[:len(y_pred)], y_pred, alpha=0.6, color='blue')
+plt.plot([min(y_train), max(y_train)], [min(y_train), max(y_train)], '--r', label="Ideal Fit")
+plt.xlabel("Actual Units Sold")
 plt.ylabel("Predicted Units Sold")
-plt.title("Predicted Units Sold per Record")
-plt.xticks(rotation=45)
-plt.grid()
+plt.title("Actual vs Predicted Units Sold")
+plt.legend()
+st.pyplot(plt)
+
+# Visualization 3: Interactive Prediction Histogram
+st.subheader("Interactive Visualization: Prediction Histogram")
+max_bins = st.slider("Select Number of Bins for Histogram", 5, 50, 20)
+plt.figure(figsize=(8, 5))
+plt.hist(y_pred, bins=max_bins, alpha=0.7, color='green')
+plt.xlabel("Predicted Units Sold")
+plt.ylabel("Frequency")
+plt.title("Distribution of Predicted Units Sold")
 st.pyplot(plt)
