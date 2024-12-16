@@ -70,7 +70,7 @@ train_data["store_id"] = encoder.fit_transform(train_data["store_id"])
 test_data["store_id"] = encoder.transform(test_data["store_id"])
 
 # Train model
-rf_model = RandomForestRegressor(n_estimators=50, random_state=42)
+rf_model = RandomForestRegressor(n_estimators=50, max_depth=10, random_state=42)
 rf_model.fit(X_train, y_train)
 
 # Save model
@@ -111,20 +111,39 @@ streamlit.pyplot(matplotlib.pyplot)
 
 # Visualization 2: Scatter Plot
 streamlit.subheader("Scatter Plot of Predicted Units Sold")
-matplotlib.pyplot.scatter(test_data["sku_id"], test_data["predicted_units_sold"], color="blue", alpha=0.7)
-matplotlib.pyplot.title("Predicted Units Sold by SKU")
+
+# Convert SKU IDs to strings
+test_data['sku_id'] = test_data['sku_id'].astype(str)
+
+# Add slider to select the number of SKUs
+top_n = streamlit.slider("Number of SKUs to Display", 10, 100, 20)
+
+# Get top N SKUs
+top_skus = test_data.groupby('sku_id')['predicted_units_sold'].sum().sort_values(ascending=False).head(top_n)
+
+# Plot
+matplotlib.pyplot.figure(figsize=(12, 6))
+matplotlib.pyplot.scatter(top_skus.index, top_skus.values, color="blue", alpha=0.7)
+matplotlib.pyplot.title(f"Top {top_n} SKUs by Predicted Units Sold")
 matplotlib.pyplot.xlabel("SKU ID")
-matplotlib.pyplot.ylabel("Predicted Units")
-matplotlib.pyplot.xticks(rotation=90)
+matplotlib.pyplot.ylabel("Predicted Units Sold")
+matplotlib.pyplot.xticks(rotation=90, fontsize=8)  # Rotate for clarity
+matplotlib.pyplot.tight_layout()  # Adjust spacing
 streamlit.pyplot(matplotlib.pyplot)
+
 
 # Visualization 3: Bar Chart
 streamlit.subheader("Predicted Units Sold (Top SKUs)")
+
 top_n = streamlit.slider("Number of SKUs to Display", 5, 20, 10)
 sku_sales = test_data.groupby("sku_id")["predicted_units_sold"].sum().sort_values(ascending=False).head(top_n)
-matplotlib.pyplot.bar(sku_sales.index, sku_sales.values, color="orange")
-matplotlib.pyplot.title("Top " + str(top_n) + " SKUs by Predicted Sales")
+
+# Fix for overlapping labels and poor formatting
+matplotlib.pyplot.figure(figsize=(12, 6))  # Larger figure size
+matplotlib.pyplot.bar(sku_sales.index, sku_sales.values, color="blue")
+matplotlib.pyplot.title(f"Top {top_n} SKUs by Predicted Sales")
 matplotlib.pyplot.xlabel("SKU")
 matplotlib.pyplot.ylabel("Predicted Units Sold")
-matplotlib.pyplot.xticks(rotation=45)
+matplotlib.pyplot.xticks(rotation=45, ha="right", fontsize=8)  # Rotate and align labels
+matplotlib.pyplot.tight_layout()  # Prevent overlap
 streamlit.pyplot(matplotlib.pyplot)
