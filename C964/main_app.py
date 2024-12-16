@@ -110,40 +110,23 @@ matplotlib.pyplot.ylabel("Features")
 streamlit.pyplot(matplotlib.pyplot)
 
 # Visualization 2: Scatter Plot
-streamlit.subheader("Scatter Plot of Predicted Units Sold")
-
-# Convert SKU IDs to strings
-test_data['sku_id'] = test_data['sku_id'].astype(str)
-
-# Add slider to select the number of SKUs
-top_n = streamlit.slider("Number of SKUs to Display", 10, 100, 20)
-
-# Get top N SKUs
-top_skus = test_data.groupby('sku_id')['predicted_units_sold'].sum().sort_values(ascending=False).head(top_n)
-
-# Plot
-matplotlib.pyplot.figure(figsize=(12, 6))
-matplotlib.pyplot.scatter(top_skus.index, top_skus.values, color="blue", alpha=0.7)
-matplotlib.pyplot.title(f"Top {top_n} SKUs by Predicted Units Sold")
-matplotlib.pyplot.xlabel("SKU ID")
-matplotlib.pyplot.ylabel("Predicted Units Sold")
-matplotlib.pyplot.xticks(rotation=90, fontsize=8)  # Rotate for clarity
-matplotlib.pyplot.tight_layout()  # Adjust spacing
+streamlit.subheader("Distribution of Predicted Units Sold")
+matplotlib.pyplot.figure(figsize=(10, 6))
+matplotlib.pyplot.hist(test_data['predicted_units_sold'], bins=20, color="purple", edgecolor="black")
+matplotlib.pyplot.title("Distribution of Predicted Units Sold")
+matplotlib.pyplot.xlabel("Predicted Units Sold")
+matplotlib.pyplot.ylabel("Frequency")
 streamlit.pyplot(matplotlib.pyplot)
-
 
 # Visualization 3: Bar Chart
 streamlit.subheader("Predicted Units Sold (Top SKUs)")
-
 top_n = streamlit.slider("Number of SKUs to Display", 5, 20, 10)
 sku_sales = test_data.groupby("sku_id")["predicted_units_sold"].sum().sort_values(ascending=False).head(top_n)
-
-# Fix for overlapping labels and poor formatting
-matplotlib.pyplot.figure(figsize=(12, 6))  # Larger figure size
+matplotlib.pyplot.figure(figsize=(12, 6))
 matplotlib.pyplot.bar(sku_sales.index, sku_sales.values, color="blue")
 matplotlib.pyplot.title(f"Top {top_n} SKUs by Predicted Sales")
 matplotlib.pyplot.xlabel("SKU")
 matplotlib.pyplot.ylabel("Predicted Units Sold")
-matplotlib.pyplot.xticks(rotation=45, ha="right", fontsize=8)  # Rotate and align labels
-matplotlib.pyplot.tight_layout()  # Prevent overlap
+matplotlib.pyplot.xticks(rotation=45, ha="right", fontsize=8)
+matplotlib.pyplot.tight_layout()
 streamlit.pyplot(matplotlib.pyplot)
