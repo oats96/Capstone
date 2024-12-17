@@ -74,7 +74,7 @@ rf_model = RandomForestRegressor(n_estimators=50, max_depth=10, random_state=42)
 rf_model.fit(X_train, y_train)
 
 # Save model
-joblib.dump(rf_model, "rf_model.pkl")
+joblib.dump(rf_model, "./C964/models/rf_model.pkl")
 
 # Make predictions
 y_pred = rf_model.predict(X_test)
